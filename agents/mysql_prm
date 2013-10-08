@@ -664,7 +664,8 @@ check_slave() {
                if [ $rc -eq 0 -a "$slave_io" == 'Yes' ]; then
                    ocf_log info "MySQL Slave IO thread started succesfully."
                else
-                   ocf_log warn "We could not start the MySQL Slave IO thread."
+                   ocf_log err "We could not start the MySQL Slave IO thread."
+                   exit $OCF_ERR_GENERIC
                fi
             fi
             
