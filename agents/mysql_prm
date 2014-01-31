@@ -832,13 +832,31 @@ set_master() {
       # name of the new master host. The master must either be unchanged
       # from the laste master the slave replicated from, or freshly
       # reset with RESET MASTER.
-      
-      mysql_run -Q -sw $MYSQL $MYSQL_OPTIONS_REPL \
-      -e "STOP SLAVE;CHANGE MASTER TO MASTER_HOST='$new_master', \
-           MASTER_PORT=$OCF_RESKEY_replication_port, \
-           MASTER_USER='$OCF_RESKEY_replication_user', \
-           MASTER_PASSWORD='$OCF_RESKEY_replication_passwd' \
-      $OCF_RESKEY_replication_options $master_params;START SLAVE;"
+     
+      # INSERT PATCH HERE
+	# FIXME there is an assumption about new_master being filled in at this point, 
+	# which we managed to break. 
+	if [ -n "$new_master" ]
+	then
+	    ocf_log info "we have a new_master!"
+	    ocf_log debug running: mysql_run -Q -sw $MYSQL $MYSQL_OPTIONS_REPL \
+	       -e "STOP SLAVE;CHANGE MASTER TO MASTER_HOST='$new_master', \
+	       MASTER_PORT=$OCF_RESKEY_replication_port, \
+	       MASTER_USER='$OCF_RESKEY_replication_user', \
+	       MASTER_PASSWORD='$OCF_RESKEY_replication_passwd' \
+	       $OCF_RESKEY_replication_options $master_params;START SLAVE;"
+
+	    mysql_run -Q -sw $MYSQL $MYSQL_OPTIONS_REPL \
+	       -e "STOP SLAVE;CHANGE MASTER TO MASTER_HOST='$new_master', \
+	       MASTER_PORT=$OCF_RESKEY_replication_port, \
+	       MASTER_USER='$OCF_RESKEY_replication_user', \
+	       MASTER_PASSWORD='$OCF_RESKEY_replication_passwd' \
+	       $OCF_RESKEY_replication_options $master_params;START SLAVE;"
+	else
+	    ocf_log info "We don't have a new_master. We're just going to run 'start slave', mysqld will try to pick up where it stopped."
+	    mysql_run -Q -sw $MYSQL $MYSQL_OPTIONS_REPL \
+	       -e "START SLAVE;"
+       fi
    fi
 }
 
