@@ -1,4 +1,4 @@
-Percona resource agents
+Percona resource agents for mariadb gtid (developing)
 =======================
 
 This repository stores Pacemaker resource agents used in solutions developed by Percona.
