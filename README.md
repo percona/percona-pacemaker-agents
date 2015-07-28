@@ -1,4 +1,4 @@
-Percona resource agents for mariadb gtid (developing)
+Mariadb resource agents for  gtid (developing) on pacemaker/corosync env.
 =======================
 
 This repository stores Pacemaker resource agents used in solutions developed by Percona.
